@@ -136,6 +136,10 @@ void
 MavlinkReceiver::handle_message(mavlink_message_t *msg)
 {
 	switch (msg->msgid) {
+	case MAVLINK_MSG_ID_TEST_MAVLINK:
+                handle_message_test_mavlink_rx(msg);
+                break;
+
 	case MAVLINK_MSG_ID_COMMAND_LONG:
 		handle_message_command_long(msg);
 		break;
@@ -2979,6 +2983,18 @@ MavlinkReceiver::handle_message_gimbal_manager_set_attitude(mavlink_message_t *m
 	gimbal_attitude.angular_velocity_z = set_attitude_msg.angular_velocity_z;
 
 	_gimbal_manager_set_attitude_pub.publish(gimbal_attitude);
+}
+
+void
+MavlinkReceiver::handle_message_test_mavlink_rx(mavlink_message_t *msg)
+{
+    mavlink_test_mavlink_t mavlink_test_msg;
+    mavlink_msg_test_mavlink_decode(msg, &mavlink_test_msg);
+    test_mavlink_rx_s __test_mavlink_rx;
+    __test_mavlink_rx.test1=mavlink_test_msg.test1;
+    __test_mavlink_rx.test2=mavlink_test_msg.test2;
+    __test_mavlink_rx.test3=mavlink_test_msg.test3;
+    _test_mavlink_rx_pub.publish(__test_mavlink_rx);
 }
 
 void
